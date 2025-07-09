@@ -50,6 +50,7 @@ const loginUser = async (req, res) => {
       userName: checkUser.userName,
       userEmail: checkUser.userEmail,
       password: checkUser.password,
+      role: checkUser.role,
     },
     "JWT_SECRET",
     { expiresIn: "120m" }
@@ -64,9 +65,9 @@ const loginUser = async (req, res) => {
       userName: checkUser.userName,
       userEmail: checkUser.userEmail,
       password: checkUser.password,
+      role: checkUser.role,
     },
   });
 };
 
-
-module.exports = { registerUser , loginUser};
+module.exports = { registerUser, loginUser };

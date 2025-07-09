@@ -1,6 +1,11 @@
 import axiosInstance from "@/api/axiosInstance";
+import { Skeleton } from "@/components/ui/skeleton";
 import { initialSignInFormData, initialSignUpFormData } from "@/config";
-import { checkAuthUserService, loginService, registerService } from "@/services";
+import {
+  checkAuthUserService,
+  loginService,
+  registerService,
+} from "@/services";
 import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext(null);
@@ -12,6 +17,7 @@ export default function AuthProvider({ children }) {
     authenticate: false,
     user: null,
   });
+  const [loading, setLoading] = useState(true);
 
   async function handleRegisterUser(event) {
     event.preventDefault();
@@ -22,6 +28,8 @@ export default function AuthProvider({ children }) {
     event.preventDefault();
     const data = await loginService(signInFormData);
 
+    console.log(data);
+
     if (data.success) {
       sessionStorage.setItem(
         "accessToken",
@@ -29,7 +37,7 @@ export default function AuthProvider({ children }) {
       );
       setAuth({
         authenticate: true,
-        user: data.data.user,
+        user: data.data,
       });
     } else {
       setAuth({
@@ -42,18 +50,31 @@ export default function AuthProvider({ children }) {
   //check auth user
 
   async function checkAuth() {
-    const data = await checkAuthUserService();
+    try {
+      const data = await checkAuthUserService();
 
-    if (data.success) {
-      setAuth({
-        authenticate: true,
-        user: data.data.user,
-      });
-    } else {
-      setAuth({
-        authenticate: false,
-        user: null,
-      });
+      if (data.success) {
+        setAuth({
+          authenticate: true,
+          user: data.data.user,
+        });
+        setLoading(false);
+      } else {
+        setAuth({
+          authenticate: false,
+          user: null,
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      if (!error?.response?.data?.success) {
+        setAuth({
+          authenticate: false,
+          user: null,
+        });
+        setLoading(false);
+      }
     }
   }
   useEffect(() => {
@@ -69,9 +90,10 @@ export default function AuthProvider({ children }) {
         setSignUpFormData,
         handleRegisterUser,
         handleLoginUser,
+        auth,
       }}
     >
-      {children}
+      {loading ? <Skeleton /> :  children }
     </AuthContext.Provider>
   );
 }
