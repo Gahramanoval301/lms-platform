@@ -1,13 +1,9 @@
 import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Select, SelectItem } from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
-import {
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "@radix-ui/react-select";
+
 
 const FormControls = ({ formControls = [], formData, setFormData }) => {
   function renderComponentByType(getControlItem) {
@@ -16,7 +12,7 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
     switch (getControlItem.componentType) {
       case "input":
         element = (
-          <Input
+          <Input className="mt-1"
             id={getControlItem.name}
             name={getControlItem.name}
             placeholder={getControlItem.placeholder}
@@ -42,7 +38,7 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
               })
             }
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full mt-1">
               <SelectValue placeholder={getControlItem.label} />
             </SelectTrigger>
             <SelectContent>
@@ -72,6 +68,7 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
             }
           />
         );
+        break;
       default:
         element = (
           <Input

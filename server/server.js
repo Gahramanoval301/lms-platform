@@ -20,7 +20,11 @@ app.use(
 app.use(express.json());
 // routes configuration
 const authRoutes = require("./routes/auth-routes/index");
+const mediaRoutes = require("./routes/instructor-routes/media-routes");
+
 app.use("/auth", authRoutes);
+app.use("/media", mediaRoutes);
+
 
 //database conneciton
 mongoose
