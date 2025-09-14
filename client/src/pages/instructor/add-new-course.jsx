@@ -4,19 +4,57 @@ import CourseSettings from "@/components/instructor-view/courses/add-new-course/
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { courseLandingInitialFormData } from "@/config";
 import { AuthContext } from "@/context/auth-context";
 import { InstructorContext } from "@/context/instructor-context";
-import { addNewCourseService } from "@/services";
+import {
+  addNewCourseService,
+  fetchInstructorCourseDetailsService,
+  updateCourseByIdService,
+} from "@/services";
 import { TabsContent } from "@radix-ui/react-tabs";
-import React, { useContext } from "react";
-import { useNavigate } from "react-router";
+import React, { useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 
 const AddNewCoursePage = () => {
-  const { courseLandingFormData, courseCurriculumFormData , setCourseLandingFormData, setCourseCurriculumFormData} =
-    useContext(InstructorContext);
+  const {
+    courseLandingFormData,
+    courseCurriculumFormData,
+    setCourseLandingFormData,
+    setCourseCurriculumFormData,
+    currentEditedCourseId,
+    setCurrentEditedCourseId,
+  } = useContext(InstructorContext);
 
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const params = useParams();
+
+  async function fetchCurrentCourseDetails() {
+    const res = await fetchInstructorCourseDetailsService(
+      currentEditedCourseId
+    );
+
+    if (res?.success) {
+      const setCourseFormData = Object.keys(
+        courseLandingInitialFormData
+      ).reduce((acc, key) => {
+        acc[key] = res?.data[key] || courseLandingInitialFormData[key];
+        return acc;
+      }, {});
+
+      console.log(setCourseFormData);
+      setCourseLandingFormData(setCourseFormData);
+      setCourseCurriculumFormData(res?.data?.curriculum || []);
+    }
+  }
+  useEffect(() => {
+    if (currentEditedCourseId) fetchCurrentCourseDetails();
+  }, [currentEditedCourseId]);
+
+  useEffect(() => {
+    if (params?.courseId) setCurrentEditedCourseId(params.courseId);
+  }, [params?.courseId]);
 
   function isEmpty(value) {
     if (Array.isArray(value)) {
@@ -63,12 +101,18 @@ const AddNewCoursePage = () => {
       isPublished: true,
     };
 
-    const response= await addNewCourseService(courseFinalFormData);
+    const response = currentEditedCourseId
+      ? await updateCourseByIdService(
+          currentEditedCourseId,
+          courseFinalFormData
+        )
+      : addNewCourseService(courseFinalFormData);
 
-    if(response?.success){
+    if (response?.success) {
       setCourseLandingFormData(courseLandingFormData);
       setCourseCurriculumFormData(courseCurriculumFormData);
       navigate(-1);
+      setCurrentEditedCourseId(null);
     }
 
     console.log(courseFinalFormData);
