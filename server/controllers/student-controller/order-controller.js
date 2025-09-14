@@ -129,17 +129,30 @@ const capturePaymentAndFinalizeOrder = async (req, res) => {
     const studentCourses = await StudentCourses.findOne({
       userId: order.userId,
     });
-    if (studentCourses) {
-      studentCourses.courses.push({
-        courseId: order.courseId,
-        title: order.courseTitle,
-        instructorId: order.instructorId,
-        instructorName: order.instructorName,
-        dateOfPurchase: order.orderDate,
-        courseImage: order.courseImage,
-      });
 
-      await studentCourses.save();
+    if (studentCourses) {
+      const alreadyBought = studentCourses?.courses.some(
+        (course) => course.courseId.toString() === order.courseId.toString()
+      );
+
+      if (!alreadyBought) {
+        const courseData = {
+          courseId: order.courseId,
+          title: order.courseTitle,
+          instructorId: order.instructorId,
+          instructorName: order.instructorName,
+          dateOfPurchase: order.orderDate,
+          courseImage: order.courseImage,
+        };
+
+        await StudentCourses.updateOne(
+          { userId: order.userId, "courses.courseId": { $ne: order.courseId } },
+          {
+            $push: { courses: courseData },
+          },
+          { upsert: true }
+        );
+      }
     } else {
       const newStudentCourses = new StudentCourses({
         userId: order.userId,
