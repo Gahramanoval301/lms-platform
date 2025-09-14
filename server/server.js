@@ -23,10 +23,18 @@ app.use(express.json());
 const authRoutes = require("./routes/auth-routes/index");
 const mediaRoutes = require("./routes/instructor-routes/media-routes");
 const instructorRoutes = require("./routes/instructor-routes/course-routes");
+const studentViewCoursesRoutes = require("./routes/student-routes/course-routes");
+const studentViewOrderRoutes = require("./routes/student-routes/order-routes");
+const studentCoursesRoutes = require("./routes/student-routes/student-courses-routes");
+const studentCourseProgressRoutes = require("./routes/student-routes/course-progress-routes");
 
 app.use("/auth", authRoutes);
 app.use("/media", mediaRoutes);
 app.use("/instructor/course", instructorRoutes);
+app.use("/student/course", studentViewCoursesRoutes);
+app.use("/student/order", studentViewOrderRoutes);
+app.use("/student/courses-bought", studentCoursesRoutes);
+app.use("/student/course-progress", studentCourseProgressRoutes);
 
 //database conneciton
 mongoose
