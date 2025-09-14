@@ -3,26 +3,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  courseCurriculumInitialFormData,
+  courseLandingInitialFormData,
+} from "@/config";
+import { InstructorContext } from "@/context/instructor-context";
 import { Delete, Edit } from "lucide-react";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router";
 
 const InstructorCourses = ({ listOfCourses }) => {
   const navigate = useNavigate();
-  console.log(listOfCourses);
+  const {
+    setCourseLandingFormData,
+    setCourseCurriculumFormData,
+    currentEditedCourseId,
+    setCurrentEditedCourseId,
+  } = useContext(InstructorContext);
 
   return (
     <Card>
       <CardHeader className="flex justify-between flex-row items-center">
         <CardTitle className="text-3xl font-extrabold">All courses</CardTitle>
         <Button
-          onClick={() => navigate("/instructor/create-new-course")}
+          onClick={() => {
+            setCurrentEditedCourseId(null);
+            setCourseLandingFormData(courseLandingInitialFormData);
+            setCourseCurriculumFormData(courseCurriculumInitialFormData);
+            navigate("/instructor/create-new-course");
+          }}
           className="p-6 "
         >
           Create New Course
@@ -49,7 +63,14 @@ const InstructorCourses = ({ listOfCourses }) => {
                       <TableCell>{course?.students?.length}</TableCell>
                       <TableCell>${course?.pricing}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          onClick={() => {
+                            // setCurrentEditedCourseId(course?._id);
+                            navigate(`/instructor/edit-course/${course?._id}`);
+                          }}
+                          variant="ghost"
+                          size="sm"
+                        >
                           <Edit className="h-6 w-6" />
                         </Button>
                         <Button variant="ghost" size="sm">
