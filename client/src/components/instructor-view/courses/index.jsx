@@ -60,7 +60,9 @@ const InstructorCourses = ({ listOfCourses }) => {
                       <TableCell className="font-medium">
                         {course?.title}
                       </TableCell>
-                      <TableCell>{course?.students?.length}</TableCell>
+                      <TableCell>
+                        {course?.students?.length * course?.pricing}
+                      </TableCell>
                       <TableCell>${course?.pricing}</TableCell>
                       <TableCell className="text-right">
                         <Button

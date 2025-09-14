@@ -60,8 +60,10 @@ const CourseCurriculum = () => {
           ...response.data.map((item, index) => ({
             videoUrl: item?.url,
             public_id: item?.public_id,
-            title: `Lecture ${cpyCourseCurriculumFormData.length + (index + 1)}`,
-            freePreview:false
+            title: `Lecture ${
+              cpyCourseCurriculumFormData.length + (index + 1)
+            }`,
+            freePreview: false,
           })),
         ];
         setCourseCurriculumFormData(cpyCourseCurriculumFormData);
@@ -175,17 +177,19 @@ const CourseCurriculum = () => {
   //handling delete lecture
   async function handleDeleteLecture(currentIndex) {
     let cpyCourseCurriculumFormData = [...courseCurriculumFormData];
-    const getCurrentVideoPublicId =cpyCourseCurriculumFormData[currentIndex].public_id;
+    const getCurrentVideoPublicId =
+      cpyCourseCurriculumFormData[currentIndex].public_id;
 
     const response = await mediaDeleteService(getCurrentVideoPublicId);
 
-    if(response){
-      cpyCourseCurriculumFormData = cpyCourseCurriculumFormData.filter((_, index) => index !== currentIndex);
+    if (response) {
+      cpyCourseCurriculumFormData = cpyCourseCurriculumFormData.filter(
+        (_, index) => index !== currentIndex
+      );
 
       setCourseCurriculumFormData(cpyCourseCurriculumFormData);
     }
-    }
-  console.log(courseCurriculumFormData);
+  }
 
   function isCourseCurriculumFormDataValid() {
     return courseCurriculumFormData.every((item) => {
@@ -269,14 +273,18 @@ const CourseCurriculum = () => {
                 {courseCurriculumFormData[index]?.videoUrl ? (
                   <div className="flex gap-3 ">
                     <VideoPlayer
-                      width="450px"
-                      height="200px"
+                      videoContainerClassname="w-[450px] h-[200px]"
                       url={courseCurriculumFormData[index]?.videoUrl}
                     />
                     <Button onClick={() => handleReplaceVideo(index)}>
                       Replace Video
                     </Button>
-                    <Button onClick={()=>handleDeleteLecture(index)} className="bg-red-900">Delete Lecture</Button>
+                    <Button
+                      onClick={() => handleDeleteLecture(index)}
+                      className="bg-red-900"
+                    >
+                      Delete Lecture
+                    </Button>
                   </div>
                 ) : (
                   <Input

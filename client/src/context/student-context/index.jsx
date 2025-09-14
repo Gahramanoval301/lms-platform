@@ -25,8 +25,7 @@ export default function StudentProvider({ children }) {
         setCurrentCourseDetailsId,
         studentBoughtCoursesList,
         setStudentBoughtCoursesList,
-        studentCurrentCourseProgress,
-        setStudentCurrentCourseProgress,
+       studentCurrentCourseProgress, setStudentCurrentCourseProgress
       }}
     >
       {children}
