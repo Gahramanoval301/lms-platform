@@ -37,6 +37,7 @@ const StudentViewCourseDetailsPage = () => {
     useState(null);
   const [showFreePreviewDialog, setShowFreePreviewDialog] = useState(false);
   const [approvalUrl, setApprovalUrl] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -74,6 +75,10 @@ const StudentViewCourseDetailsPage = () => {
   }
 
   async function handleCreatePayment() {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
     const paymentPayload = {
       userId: auth?.user?._id,
       userName: auth?.user?.userName,
@@ -91,18 +96,21 @@ const StudentViewCourseDetailsPage = () => {
       courseId: studentViewCourseDetails?._id,
       coursePricing: studentViewCourseDetails?.pricing,
     };
+    try {
+      const response = await createPaymentService(paymentPayload);
 
-    const response = await createPaymentService(paymentPayload);
-    // console.log(response);
-
-    if (response.success) {
-      sessionStorage.setItem(
-        "currentOrderId",
-        JSON.stringify(response?.data?.orderId)
-      );
-      setApprovalUrl(response?.data?.approveUrl);
+      if (response.success) {
+        sessionStorage.setItem(
+          "currentOrderId",
+          JSON.stringify(response?.data?.orderId)
+        );
+        setApprovalUrl(response?.data?.approveUrl);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
-    console.log(paymentPayload);
   }
 
   useEffect(() => {
@@ -235,17 +243,20 @@ const StudentViewCourseDetailsPage = () => {
                         ].videoUrl
                       : ""
                   }
-                  width="450px"
-                  height="200px"
+                  videoContainerClassname="w-[450px] h-[200px]"
                 />
               </div>
-              <div className="mb-4 ">
-                <span className="text-3xl font-bold">
+              <div className="my-4 ">
+                <span className="text-3xl font-bold mt-2">
                   ${studentViewCourseDetails?.pricing}
                 </span>
 
-                <Button onClick={handleCreatePayment} className={"w-full"}>
-                  Buy Now
+                <Button
+                  onClick={handleCreatePayment}
+                  className={"w-full mt-2"}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Buy Now"}
                 </Button>
               </div>
             </CardContent>
@@ -267,8 +278,7 @@ const StudentViewCourseDetailsPage = () => {
           <div className="aspect-video rounded-lg flex items-center justify-center">
             <VideoPlayer
               url={displayCurrentVideoFreePreview}
-              width="400px"
-              height="200px"
+              videoContainerClassname="w-[400px] h-[200px]"
             />
           </div>
           <div className="flex flex-col gap-2">
