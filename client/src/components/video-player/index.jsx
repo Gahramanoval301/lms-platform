@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import ReactPlayer from "react-player";
 
-const VideoPlayer = ({ width = "100%", height = "100%", url }) => {
+const VideoPlayer = ({videoContainerClassname, url, handleVideoEnded }) => {
   console.log(url);
   //TODO optimization
   const [playing, setPlaying] = useState(false);
@@ -24,6 +24,7 @@ const VideoPlayer = ({ width = "100%", height = "100%", url }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
 
+  const videoRef = useRef(null); // ref for html video element
   const playerRef = useRef(null);
   const playerContainerRef = useRef(null);
   const controlsTimeoutRef = useRef(null);
@@ -124,9 +125,9 @@ const VideoPlayer = ({ width = "100%", height = "100%", url }) => {
   const internalPlayer = playerRef.current?.getInternalPlayer?.();
   console.log(url);
   return (
-    <div className="w-[500px] h-[200px]">
-      <video src={url} autoPlay={true} controls={true} />
-    {/* <div
+    <div  {...videoContainerClassname}>
+      <video ref={videoRef} src={url} autoPlay={true} controls={true} onEnded={handleVideoEnded} />
+      {/* <div
       ref={playerContainerRef}
       className={`relative bg-gray-900 rounded-lg overflow-hidden shadow-2xl transition-all duration-300 ease-in-out ${
         isFullScreen ? "w-screen h-screen" : ""
