@@ -12,7 +12,6 @@ export async function registerService(formData) {
 }
 export async function loginService(formData) {
   const { data } = await axiosInstance.post("/auth/login", formData);
-  console.log(data);
   return data;
 }
 export async function checkAuthUserService() {
@@ -106,6 +105,23 @@ export async function fetchStudentBoughtCoursesService(studentId) {
 export async function getCurrentCourseProgressService(userId, courseId) {
   const { data } = await axiosInstance.get(
     `/student/course-progress/get/${userId}/${courseId}`
+  );
+  return data;
+}
+
+export async function markLectureAsViewedService(userId, courseId, lectureId) {
+
+  const { data } = await axiosInstance.post(
+    `/student/course-progress/mark-lecture-viewed`,
+    { userId, courseId, lectureId}
+  );
+  return data;
+}
+
+export async function resetCourseProgressService(userId, courseId) {
+  const { data } = await axiosInstance.post(
+    `/student/course-progress/reset-progress`,
+    { userId, courseId }
   );
   return data;
 }
