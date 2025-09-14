@@ -38,7 +38,11 @@ const StudentViewCoursesPage = () => {
   const { auth } = useContext(AuthContext);
   const [sort, setSort] = useState("price-lowtohigh");
   const [searchParams, setSearchParams] = useSearchParams();
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState(() => {
+    const savedFilters = sessionStorage.getItem("filters");
+    return savedFilters ? JSON.parse(savedFilters) : null;
+  });
+
   const navigate = useNavigate();
 
   const {
@@ -47,6 +51,7 @@ const StudentViewCoursesPage = () => {
     loadingState,
     setLoadingState,
   } = useContext(StudentContext);
+  console.log(filters, studentViewCoursesList);
 
   async function fetchAllStudentViewCourses(filters, sort) {
     const query = new URLSearchParams({ ...filters, sortBy: sort });
@@ -94,19 +99,19 @@ const StudentViewCoursesPage = () => {
         navigate(`/courses/details/${getCurrentCourseId}`);
       }
     }
-
-    console.log("response leman!", response);
   }
 
   useEffect(() => {
-    if (filters !== null && sort !== null) {
+    if (filters !== null && sort) {
       fetchAllStudentViewCourses(filters, sort);
     }
   }, [filters, sort]);
 
   useEffect(() => {
     setSort("price-lowtohigh");
-    setFilters(JSON.parse(sessionStorage.getItem("filters") || "{}"));
+    if (JSON.parse(sessionStorage.getItem("filters") || "{}")) {
+      setFilters(JSON.parse(sessionStorage.getItem("filters") || "{}"));
+    }
   }, []);
 
   // useEffect(() => {
