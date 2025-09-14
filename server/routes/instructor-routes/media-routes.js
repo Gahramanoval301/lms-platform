@@ -40,11 +40,33 @@ router.delete("/delete/:id", async (req, res) => {
 
     res.status(200).json({
       message: "File deleted successfully",
-      success: true
+      success: true,
     });
   } catch (error) {
     res.status(500).json({
       message: "Error uploading file",
+      sucess: false,
+    });
+    console.log(error);
+  }
+});
+
+router.post("/bulk-upload", upload.array("files", 10), async (req, res) => {
+  try {
+    const uploadPromises = req.files.map((fileItem) =>
+      uploadMediaToCloudinary(fileItem.path)
+    );
+
+    const results = await Promise.all(uploadPromises);
+
+    res.status(200).json({
+      message: "Files uploaded successfully",
+      success: true,
+      data: results,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in bulk uploading files",
       sucess: false,
     });
     console.log(error);
