@@ -3,11 +3,29 @@ import banner from "../../../../public/banner-img-lms.jpg";
 import { courseCategories } from "@/config";
 import { Button } from "@/components/ui/button";
 import { StudentContext } from "@/context/student-context";
-import { fetchStudentViewCourseListService } from "@/services";
+import {
+  checkCoursePurchaseInfoService,
+  fetchStudentViewCourseListService,
+} from "@/services";
+import { AuthContext } from "@/context/auth-context";
+import { useNavigate } from "react-router";
 
 const StudentHomePage = () => {
   const { studentViewCoursesList, setStudentViewCoursesList } =
     useContext(StudentContext);
+  const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  function handleNavigateToCoursesPage(getCurrentId) {
+    sessionStorage.removeItem("filters");
+    const currentFilter = {
+      category: [getCurrentId],
+    };
+
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+
+    navigate(`/courses`);
+  }
 
   async function fetchAllStudentViewCourses() {
     const response = await fetchStudentViewCourseListService();
@@ -16,9 +34,26 @@ const StudentHomePage = () => {
       setStudentViewCoursesList(response.data);
     }
   }
+
+  async function handleCourseNavigate(getCurrentCourseId) {
+    const response = await checkCoursePurchaseInfoService(
+      getCurrentCourseId,
+      auth?.user?._id
+    );
+
+    if (response?.success) {
+      if (response?.data) {
+        navigate(`/course-progress/${getCurrentCourseId}`);
+      } else {
+        navigate(`/courses/details/${getCurrentCourseId}`);
+      }
+    }
+
+  }
+
   useEffect(() => {
     fetchAllStudentViewCourses();
-  },[]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -47,6 +82,7 @@ const StudentHomePage = () => {
               className="justify-start"
               variant={"outline"}
               key={categoryItem.id}
+              onClick={() => handleNavigateToCoursesPage(categoryItem.id)}
             >
               {categoryItem.label}
             </Button>
@@ -58,7 +94,10 @@ const StudentHomePage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {studentViewCoursesList && studentViewCoursesList.length > 0 ? (
             studentViewCoursesList.map((courseItem) => (
-              <div className="border rounded-lg overflow-hidden shadow cursor-pointer">
+              <div
+                onClick={() => handleCourseNavigate(courseItem?._id)}
+                className="border rounded-lg overflow-hidden shadow cursor-pointer"
+              >
                 <img
                   src={courseItem?.image}
                   width={300}
