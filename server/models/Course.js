@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const LectureSchema = new mongoose.Schema({
-    title:String, 
-    videoUrl:String, 
-    public_id:String, 
-    freePreview:Boolean
-})
+  title: String,
+  videoUrl: String,
+  public_id: String,
+  freePreview: Boolean,
+});
 
 const CourseSchema = new mongoose.Schema({
   instructorId: String,
@@ -19,18 +19,19 @@ const CourseSchema = new mongoose.Schema({
   description: String,
   image: String,
   welcomeMessage: String,
-  pricing:Number, 
-  objectives:String, 
+  pricing: Number,
+  objectives: String,
   students: [
     {
-        studentId:String,
-        studenLectureSchematName:String,
-        studentEmail:String,
-        paidAmount: String
-    }
+      studentId: String,
+      studenLectureSchematName: String,
+      studentEmail: String,
+      studentName: String,
+      paidAmount: String,
+    },
   ],
-  curriculum:[LectureSchema],
-  isPublished:Boolean,
+  curriculum: [LectureSchema],
+  isPublished: Boolean,
 });
 
 module.exports = mongoose.model("Course", CourseSchema);
