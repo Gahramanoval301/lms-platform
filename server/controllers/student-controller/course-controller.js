@@ -87,7 +87,7 @@ const checkCoursePurchasedInfo = async (req, res) => {
     });
 
     const ifStudentAlreadyPurchasedCurrentCourse =
-      studentCourses.courses.findIndex((item) => item.courseId === id) > -1;
+      studentCourses?.courses?.findIndex((item) => item.courseId === id) > -1;
 
     res.status(200).json({
       success: true,
@@ -98,4 +98,8 @@ const checkCoursePurchasedInfo = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-module.exports = { getAllStudentViewCourseDetails, getAllStudentViewCourses, checkCoursePurchasedInfo };
+module.exports = {
+  getAllStudentViewCourseDetails,
+  getAllStudentViewCourses,
+  checkCoursePurchasedInfo,
+};
