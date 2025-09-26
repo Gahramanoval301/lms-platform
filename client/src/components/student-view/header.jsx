@@ -3,14 +3,18 @@ import React, { useContext } from "react";
 import { Button } from "../ui/button";
 import { AuthContext } from "@/context/auth-context";
 import { Link, useNavigate } from "react-router";
+import { LogoutService } from "@/services";
 
 const StudentViewCommonHeader = () => {
   const navigate = useNavigate();
   const { resetCredentials } = useContext(AuthContext);
 
-  function handleLogout() {
-    resetCredentials();
-    sessionStorage.clear();
+  async function handleLogout() {
+    const res = await LogoutService();
+    if (res) {
+      resetCredentials();
+      sessionStorage.clear();
+    }
   }
 
   return (
