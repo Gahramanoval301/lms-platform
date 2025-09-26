@@ -7,16 +7,23 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadMediaToCloudinary = async (filePath) => {
-  try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      resource_type: "auto",
-    });
-    return result;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Error uploading media asset to cloudinary");
-  }
+const uploadMediaToCloudinary = async (file) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "auto",
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+
+    uploadStream.end(file.buffer);
+  });
 };
 
 const deleteMediaFromCloudinary = async (publicId) => {
