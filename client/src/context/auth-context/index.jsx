@@ -1,4 +1,3 @@
-import axiosInstance from "@/api/axiosInstance";
 import { Skeleton } from "@/components/ui/skeleton";
 import { initialSignInFormData, initialSignUpFormData } from "@/config";
 import {
@@ -31,10 +30,10 @@ export default function AuthProvider({ children }) {
     console.log(data);
 
     if (data.success) {
-      sessionStorage.setItem(
-        "accessToken",
-        JSON.stringify(data.data.accessToken)
-      );
+      // sessionStorage.setItem(
+      //   "accessToken",
+      //   JSON.stringify(data.data.accessToken)
+      // );
       setAuth({
         authenticate: true,
         user: data.data,
