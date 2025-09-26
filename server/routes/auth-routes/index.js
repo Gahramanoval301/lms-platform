@@ -2,12 +2,16 @@ const express = require("express");
 const {
   registerUser,
   loginUser,
+  logout,
+  refreshToken,
 } = require("../../controllers/auth-controller/index");
 const authenticateMiddleware = require("../../middleware/auth-middleware");
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/logout", logout);
+router.post("/refresh-token", refreshToken);
 router.get("/check-auth", authenticateMiddleware, (req, res) => {
   const user = req.user;
 
