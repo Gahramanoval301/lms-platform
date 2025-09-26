@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { AuthContext } from "@/context/auth-context";
 import { InstructorContext } from "@/context/instructor-context";
-import { fetchInstructorCourseListService } from "@/services";
+import { fetchInstructorCourseListService, LogoutService } from "@/services";
 import { BarChart, Book, LogOut } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 
@@ -45,11 +45,13 @@ const InstructorDashboardPage = () => {
     },
   ];
 
-  function handleLogout() {
-    resetCredentials();
-    sessionStorage.clear();
+  async function handleLogout() {
+    const res = await LogoutService();
+    if (res) {
+      resetCredentials();
+      sessionStorage.clear();
+    }
   }
-
   return (
     <div className="flex h-full min-h-screen bg-gray-100">
       <aside className="w-64 bg-white shadown-md hidden md:block">

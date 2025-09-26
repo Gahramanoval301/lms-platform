@@ -14,6 +14,14 @@ export async function loginService(formData) {
   const { data } = await axiosInstance.post("/auth/login", formData);
   return data;
 }
+export async function refreshTokenService() {
+  const { data } = await axiosInstance.post("/auth/refresh-token");
+  return data;
+}
+export async function LogoutService() {
+  const { data } = await axiosInstance.post("/auth/logout", );
+  return data;
+}
 export async function checkAuthUserService() {
   const { data } = await axiosInstance.get("/auth/check-auth");
   return data;
